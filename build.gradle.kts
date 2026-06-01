@@ -198,7 +198,6 @@ kotlin {
     iosArm64 {
         binaries.framework {
             baseName = "Wiremock"
-            isStatic = true
             xcf.add(this)
         }
     }

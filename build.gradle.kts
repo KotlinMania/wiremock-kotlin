@@ -196,7 +196,11 @@ kotlin {
         binaries.framework { baseName = "Wiremock"; xcf.add(this) }
     }
     iosArm64 {
-        binaries.framework { baseName = "Wiremock"; xcf.add(this) }
+        binaries.framework {
+            baseName = "Wiremock"
+            isStatic = true
+            xcf.add(this)
+        }
     }
     iosSimulatorArm64 {
         binaries.framework {
@@ -220,9 +224,6 @@ kotlin {
         binaries.framework { baseName = "Wiremock"; xcf.add(this) }
     }
 
-    watchosArm32 {
-        binaries.framework { baseName = "Wiremock"; xcf.add(this) }
-    }
     watchosArm64 {
         binaries.framework { baseName = "Wiremock"; xcf.add(this) }
     }
@@ -510,8 +511,6 @@ val fullTargetBuildTasks = listOf(
     "tvosArm64TestBinaries",
     "tvosSimulatorArm64Binaries",
     "tvosSimulatorArm64TestBinaries",
-    "watchosArm32Binaries",
-    "watchosArm32TestBinaries",
     "watchosArm64Binaries",
     "watchosArm64TestBinaries",
     "watchosDeviceArm64Binaries",

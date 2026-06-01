@@ -28,7 +28,7 @@ plugins {
 }
 
 group = "io.github.kotlinmania"
-version = "0.1.0"
+version = "0.1.1"
 
 val androidCommandLineToolsRevision = "14742923"
 val projectCompileSdk = "34"
@@ -196,7 +196,10 @@ kotlin {
         binaries.framework { baseName = "Wiremock"; xcf.add(this) }
     }
     iosArm64 {
-        binaries.framework { baseName = "Wiremock"; xcf.add(this) }
+        binaries.framework {
+            baseName = "Wiremock"
+            xcf.add(this)
+        }
     }
     iosSimulatorArm64 {
         binaries.framework {
@@ -220,9 +223,6 @@ kotlin {
         binaries.framework { baseName = "Wiremock"; xcf.add(this) }
     }
 
-    watchosArm32 {
-        binaries.framework { baseName = "Wiremock"; xcf.add(this) }
-    }
     watchosArm64 {
         binaries.framework { baseName = "Wiremock"; xcf.add(this) }
     }
@@ -510,8 +510,6 @@ val fullTargetBuildTasks = listOf(
     "tvosArm64TestBinaries",
     "tvosSimulatorArm64Binaries",
     "tvosSimulatorArm64TestBinaries",
-    "watchosArm32Binaries",
-    "watchosArm32TestBinaries",
     "watchosArm64Binaries",
     "watchosArm64TestBinaries",
     "watchosDeviceArm64Binaries",

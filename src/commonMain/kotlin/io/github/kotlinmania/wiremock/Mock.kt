@@ -24,22 +24,14 @@ package io.github.kotlinmania.wiremock
 class Times private constructor(
     private val inner: TimesEnum,
 ) {
-    internal fun contains(nCalls: ULong): Boolean {
-        return inner.contains(nCalls)
-    }
+    internal fun contains(nCalls: ULong): Boolean = inner.contains(nCalls)
 
-    override fun toString(): String {
-        return inner.display()
-    }
+    override fun toString(): String = inner.display()
 
     companion object {
-        fun exactly(x: ULong): Times {
-            return Times(TimesEnum.Exact(x))
-        }
+        fun exactly(x: ULong): Times = Times(TimesEnum.Exact(x))
 
-        fun unbounded(): Times {
-            return Times(TimesEnum.Unbounded)
-        }
+        fun unbounded(): Times = Times(TimesEnum.Unbounded)
 
         fun range(startInclusive: ULong, endExclusive: ULong): Times {
             require(startInclusive <= endExclusive) {
@@ -48,17 +40,11 @@ class Times private constructor(
             return Times(TimesEnum.Range(startInclusive, endExclusive))
         }
 
-        fun rangeFrom(startInclusive: ULong): Times {
-            return Times(TimesEnum.RangeFrom(startInclusive))
-        }
+        fun rangeFrom(startInclusive: ULong): Times = Times(TimesEnum.RangeFrom(startInclusive))
 
-        fun rangeTo(endExclusive: ULong): Times {
-            return Times(TimesEnum.RangeTo(endExclusive))
-        }
+        fun rangeTo(endExclusive: ULong): Times = Times(TimesEnum.RangeTo(endExclusive))
 
-        fun rangeToInclusive(endInclusive: ULong): Times {
-            return Times(TimesEnum.RangeToInclusive(endInclusive))
-        }
+        fun rangeToInclusive(endInclusive: ULong): Times = Times(TimesEnum.RangeToInclusive(endInclusive))
 
         fun rangeInclusive(startInclusive: ULong, endInclusive: ULong): Times {
             require(startInclusive <= endInclusive) {
@@ -96,75 +82,62 @@ class Times private constructor(
 // We keep the variants private to the module to allow for future refactoring.
 private sealed interface TimesEnum {
     fun contains(nCalls: ULong): Boolean
+
     fun display(): String
 
-    data class Exact(val value: ULong) : TimesEnum {
-        override fun contains(nCalls: ULong): Boolean {
-            return value == nCalls
-        }
+    data class Exact(
+        val value: ULong,
+    ) : TimesEnum {
+        override fun contains(nCalls: ULong): Boolean = value == nCalls
 
-        override fun display(): String {
-            return "== $value"
-        }
+        override fun display(): String = "== $value"
     }
 
     data object Unbounded : TimesEnum {
-        override fun contains(nCalls: ULong): Boolean {
-            return true
-        }
+        override fun contains(nCalls: ULong): Boolean = true
 
-        override fun display(): String {
-            return "0 <= x"
-        }
+        override fun display(): String = "0 <= x"
     }
 
-    data class Range(val start: ULong, val endExclusive: ULong) : TimesEnum {
-        override fun contains(nCalls: ULong): Boolean {
-            return nCalls >= start && nCalls < endExclusive
-        }
+    data class Range(
+        val start: ULong,
+        val endExclusive: ULong,
+    ) : TimesEnum {
+        override fun contains(nCalls: ULong): Boolean = nCalls >= start && nCalls < endExclusive
 
-        override fun display(): String {
-            return "$start <= x < $endExclusive"
-        }
+        override fun display(): String = "$start <= x < $endExclusive"
     }
 
-    data class RangeFrom(val start: ULong) : TimesEnum {
-        override fun contains(nCalls: ULong): Boolean {
-            return nCalls >= start
-        }
+    data class RangeFrom(
+        val start: ULong,
+    ) : TimesEnum {
+        override fun contains(nCalls: ULong): Boolean = nCalls >= start
 
-        override fun display(): String {
-            return "$start <= x"
-        }
+        override fun display(): String = "$start <= x"
     }
 
-    data class RangeTo(val endExclusive: ULong) : TimesEnum {
-        override fun contains(nCalls: ULong): Boolean {
-            return nCalls < endExclusive
-        }
+    data class RangeTo(
+        val endExclusive: ULong,
+    ) : TimesEnum {
+        override fun contains(nCalls: ULong): Boolean = nCalls < endExclusive
 
-        override fun display(): String {
-            return "0 <= x < $endExclusive"
-        }
+        override fun display(): String = "0 <= x < $endExclusive"
     }
 
-    data class RangeToInclusive(val endInclusive: ULong) : TimesEnum {
-        override fun contains(nCalls: ULong): Boolean {
-            return nCalls <= endInclusive
-        }
+    data class RangeToInclusive(
+        val endInclusive: ULong,
+    ) : TimesEnum {
+        override fun contains(nCalls: ULong): Boolean = nCalls <= endInclusive
 
-        override fun display(): String {
-            return "0 <= x <= $endInclusive"
-        }
+        override fun display(): String = "0 <= x <= $endInclusive"
     }
 
-    data class RangeInclusive(val start: ULong, val endInclusive: ULong) : TimesEnum {
-        override fun contains(nCalls: ULong): Boolean {
-            return nCalls >= start && nCalls <= endInclusive
-        }
+    data class RangeInclusive(
+        val start: ULong,
+        val endInclusive: ULong,
+    ) : TimesEnum {
+        override fun contains(nCalls: ULong): Boolean = nCalls >= start && nCalls <= endInclusive
 
-        override fun display(): String {
-            return "$start <= x <= $endInclusive"
-        }
+        override fun display(): String = "$start <= x <= $endInclusive"
     }
 }

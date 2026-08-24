@@ -4,49 +4,39 @@ package io.github.kotlinmania.wiremock
 /**
  * Specifies how many times we expect a mock to match via its expectation setting.
  * It is used to set expectations on the usage of a mock in a test case.
- *
- * You can either specify an exact value:
- *
- * ```
- * val times = Times.exactly(10uL)
- * ```
- *
- * Or a range:
- *
- * ```
- * val betweenTenAndFifteen = Times.range(10uL, 15uL)
- * val betweenTenAndFifteenInclusive = Times.rangeInclusive(10uL, 15uL)
- * val atLeastTen = Times.rangeFrom(10uL)
- * val lessThanFifteen = Times.rangeTo(15uL)
- * val lessThanSixteen = Times.rangeToInclusive(15uL)
- * ```
  */
-class Times private constructor(
+public class Times private constructor(
     private val inner: TimesEnum,
 ) {
     internal fun contains(nCalls: ULong): Boolean = inner.contains(nCalls)
 
     override fun toString(): String = inner.display()
 
-    companion object {
-        fun exactly(x: ULong): Times = Times(TimesEnum.Exact(x))
+    public companion object {
+        public fun exactly(x: ULong): Times = Times(TimesEnum.Exact(x))
 
-        fun unbounded(): Times = Times(TimesEnum.Unbounded)
+        public fun unbounded(): Times = Times(TimesEnum.Unbounded)
 
-        fun range(startInclusive: ULong, endExclusive: ULong): Times {
+        public fun range(
+            startInclusive: ULong,
+            endExclusive: ULong,
+        ): Times {
             require(startInclusive <= endExclusive) {
                 "range start must be less than or equal to range end"
             }
             return Times(TimesEnum.Range(startInclusive, endExclusive))
         }
 
-        fun rangeFrom(startInclusive: ULong): Times = Times(TimesEnum.RangeFrom(startInclusive))
+        public fun rangeFrom(startInclusive: ULong): Times = Times(TimesEnum.RangeFrom(startInclusive))
 
-        fun rangeTo(endExclusive: ULong): Times = Times(TimesEnum.RangeTo(endExclusive))
+        public fun rangeTo(endExclusive: ULong): Times = Times(TimesEnum.RangeTo(endExclusive))
 
-        fun rangeToInclusive(endInclusive: ULong): Times = Times(TimesEnum.RangeToInclusive(endInclusive))
+        public fun rangeToInclusive(endInclusive: ULong): Times = Times(TimesEnum.RangeToInclusive(endInclusive))
 
-        fun rangeInclusive(startInclusive: ULong, endInclusive: ULong): Times {
+        public fun rangeInclusive(
+            startInclusive: ULong,
+            endInclusive: ULong,
+        ): Times {
             require(startInclusive <= endInclusive) {
                 "range start must be less than or equal to range end"
             }
@@ -55,31 +45,6 @@ class Times private constructor(
     }
 }
 
-// Implementation notes: this has gone through a couple of iterations before landing to
-// what you see now.
-//
-// The original draft had Times itself as a sealed type with two variants, Exact and Range,
-// with the Range variant generic over a range-bounds type.
-//
-// We switched to a generic struct wrapper around a private range-bounds value when we
-// realised that you would have had to specify a range type when creating the Exact variant.
-//
-// We achieved the same functionality with a struct wrapper, but exact values had to be
-// converted to ranges with a single element.
-// Not the most expressive representation, but we would have lived with it.
-//
-// We changed once again when we started to update our Mock actor: we are storing all Mocks
-// in a list. Being generic over the range type leaked into the overall Mock and MountedMock
-// type, thus making those generic as well over the range type.
-// To store them in a list all mocks would have had to use the same range internally, which is
-// obviously an unreasonable restriction.
-// At the same time, we cannot have an erased range-bounds object because contains is generic
-// and therefore object-safety requirements are not satisfied.
-//
-// Thus we ended up creating this master sealed type that wraps all range variants with the
-// addition of the Exact variant.
-// If you can do better, please submit a PR.
-// We keep the variants private to the module to allow for future refactoring.
 private sealed interface TimesEnum {
     fun contains(nCalls: ULong): Boolean
 
@@ -140,4 +105,64 @@ private sealed interface TimesEnum {
 
         override fun display(): String = "$start <= x <= $endInclusive"
     }
+}
+
+/**
+ * Given a set of matchers, instructs a MockServer to return a response when conditions are satisfied.
+ */
+public class Mock(
+    public val matchers: List<Match>,
+    public val response: Respond,
+    public var maxNMatches: ULong? = null,
+    public var priority: UByte = 5u,
+    public var name: String? = null,
+    public var expectationRange: Times = Times.unbounded(),
+) {
+    public fun upToNTimes(n: ULong): Mock {
+        require(n > 0uL) { "n must be strictly greater than 0" }
+        maxNMatches = n
+        return this
+    }
+
+    public fun priority(priority: UByte): Mock {
+        this.priority = priority
+        return this
+    }
+
+    public fun named(name: String): Mock {
+        this.name = name
+        return this
+    }
+
+    public fun expect(times: Times): Mock {
+        this.expectationRange = times
+        return this
+    }
+
+    public fun expect(nCalls: ULong): Mock {
+        this.expectationRange = Times.exactly(nCalls)
+        return this
+    }
+
+    public fun matches(request: Request): Boolean = matchers.all { it.matches(request) }
+
+    public companion object {
+        public fun given(matcher: Match): MockBuilder = MockBuilder(mutableListOf(matcher))
+    }
+}
+
+/**
+ * A fluent builder to construct a Mock instance.
+ */
+public class MockBuilder(
+    public val matchers: MutableList<Match>,
+) {
+    public fun and(matcher: Match): MockBuilder {
+        matchers.add(matcher)
+        return this
+    }
+
+    public fun respondWith(response: Respond): Mock = Mock(matchers.toList(), response)
+
+    public fun respondWith(template: ResponseTemplate): Mock = Mock(matchers.toList(), template)
 }

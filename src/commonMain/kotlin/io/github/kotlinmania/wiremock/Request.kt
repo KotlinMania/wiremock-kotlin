@@ -41,6 +41,32 @@ public data class Request(
 
     public fun bodyString(): String = body.decodeToString()
 
+    public fun printWithLimit(
+        buffer: StringBuilder,
+        bodyPrintLimit: BodyPrintLimit,
+    ) {
+        buffer.appendLine("$method $url")
+        for ((name, values) in headers) {
+            buffer.appendLine("$name: ${values.joinToString(",")}")
+        }
+        when (bodyPrintLimit) {
+            is BodyPrintLimit.Limited -> {
+                val limit = bodyPrintLimit.limit
+                if (body.size > limit) {
+                    val truncated = body.copyOfRange(0, limit).decodeToString()
+                    buffer.appendLine(truncated)
+                    buffer.appendLine("We truncated the body because it was too large: ${body.size} bytes (limit: $limit bytes)")
+                    buffer.appendLine("Increase this limit by setting `WIREMOCK_BODY_PRINT_LIMIT`, or calling `MockServerBuilder::body_print_limit` when building your MockServer instance")
+                } else {
+                    buffer.appendLine(body.decodeToString())
+                }
+            }
+            is BodyPrintLimit.Unlimited -> {
+                buffer.appendLine(body.decodeToString())
+            }
+        }
+    }
+
     public companion object {
         public const val BODY_PRINT_LIMIT: Int = 10_000
     }

@@ -154,15 +154,19 @@ public class Mock(
 /**
  * A fluent builder to construct a Mock instance.
  */
-public class MockBuilder(
-    public val matchers: MutableList<Match>,
+public class MockBuilder internal constructor(
+    private val matchersList: MutableList<Match>,
 ) {
+    public constructor(matcher: Match) : this(mutableListOf(matcher))
+
+    public val matchers: List<Match> get() = matchersList
+
     public fun and(matcher: Match): MockBuilder {
-        matchers.add(matcher)
+        matchersList.add(matcher)
         return this
     }
 
-    public fun respondWith(response: Respond): Mock = Mock(matchers.toList(), response)
+    public fun respondWith(response: Respond): Mock = Mock(matchersList.toList(), response)
 
-    public fun respondWith(template: ResponseTemplate): Mock = Mock(matchers.toList(), template)
+    public fun respondWith(template: ResponseTemplate): Mock = Mock(matchersList.toList(), template)
 }

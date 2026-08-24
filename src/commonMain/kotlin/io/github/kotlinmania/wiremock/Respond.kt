@@ -7,3 +7,10 @@ package io.github.kotlinmania.wiremock
 public fun interface Respond {
     public fun respond(request: Request): ResponseTemplate
 }
+
+/**
+ * Like Respond, but it allows returning an error through a function.
+ */
+public fun interface RespondErr {
+    public fun respondErr(request: Request): ErrorResponse
+}

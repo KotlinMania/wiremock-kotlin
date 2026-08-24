@@ -1,11 +1,21 @@
 // port-lint: source matchers.rs
 package io.github.kotlinmania.wiremock
 
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
+
 /**
  * Strategy interface to match incoming HTTP requests.
  */
 public fun interface Match {
     public fun matches(request: Request): Boolean
+}
+
+/**
+ * Match all incoming requests, regardless of their method, path, headers, or body.
+ */
+public class AnyMatcher : Match {
+    override fun matches(request: Request): Boolean = true
 }
 
 /**
@@ -74,6 +84,32 @@ public class HeaderExactMatcher(
 }
 
 /**
+ * Match if a header with the given key exists.
+ */
+public class HeaderExistsMatcher(
+    public val key: String,
+) : Match {
+    override fun matches(request: Request): Boolean =
+        request.headers.keys.any { it.equals(key, ignoreCase = true) }
+}
+
+/**
+ * Match header values against a regular expression.
+ */
+public class HeaderRegexMatcher(
+    public val key: String,
+    public val regex: Regex,
+) : Match {
+    override fun matches(request: Request): Boolean {
+        val values =
+            request.headers.entries
+                .firstOrNull { it.key.equals(key, ignoreCase = true) }
+                ?.value ?: return false
+        return values.any { regex.matches(it) }
+    }
+}
+
+/**
  * Match request body exact bytes.
  */
 public class BodyExactMatcher(
@@ -91,7 +127,107 @@ public class BodyStringMatcher(
     override fun matches(request: Request): Boolean = request.bodyString() == body
 }
 
+/**
+ * Match if the request body string contains a substring.
+ */
+public class BodyContainsMatcher(
+    public val substring: String,
+) : Match {
+    override fun matches(request: Request): Boolean = request.bodyString().contains(substring)
+}
+
+/**
+ * Match exact query parameter key and value.
+ */
+public class QueryParamExactMatcher(
+    public val key: String,
+    public val value: String,
+) : Match {
+    override fun matches(request: Request): Boolean {
+        val query = request.url.substringAfter('?', "")
+        if (query.isEmpty()) return false
+        val params =
+            query.split('&').map {
+                val parts = it.split('=', limit = 2)
+                parts[0] to (parts.getOrNull(1) ?: "")
+            }
+        return params.any { it.first == key && it.second == value }
+    }
+}
+
+/**
+ * Match query parameter containing substring in its value.
+ */
+public class QueryParamContainsMatcher(
+    public val key: String,
+    public val substring: String,
+) : Match {
+    override fun matches(request: Request): Boolean {
+        val query = request.url.substringAfter('?', "")
+        if (query.isEmpty()) return false
+        val params =
+            query.split('&').map {
+                val parts = it.split('=', limit = 2)
+                parts[0] to (parts.getOrNull(1) ?: "")
+            }
+        return params.any { it.first == key && it.second.contains(substring) }
+    }
+}
+
+/**
+ * Match if a query parameter key is missing.
+ */
+public class QueryParamIsMissingMatcher(
+    public val key: String,
+) : Match {
+    override fun matches(request: Request): Boolean {
+        val query = request.url.substringAfter('?', "")
+        if (query.isEmpty()) return true
+        val params = query.split('&').map { it.substringBefore('=') }
+        return !params.contains(key)
+    }
+}
+
+/**
+ * Match basic authentication header.
+ */
+public class BasicAuthMatcher(
+    private val headerMatcher: HeaderExactMatcher,
+) : Match {
+    override fun matches(request: Request): Boolean = headerMatcher.matches(request)
+
+    public companion object {
+        @OptIn(ExperimentalEncodingApi::class)
+        public fun fromCredentials(
+            username: String,
+            password: String,
+        ): BasicAuthMatcher {
+            val encoded = Base64.encode("$username:$password".encodeToByteArray())
+            return fromToken(encoded)
+        }
+
+        public fun fromToken(token: String): BasicAuthMatcher =
+            BasicAuthMatcher(HeaderExactMatcher("Authorization", "Basic $token"))
+    }
+}
+
+/**
+ * Match bearer token authentication header.
+ */
+public class BearerTokenMatcher(
+    private val headerMatcher: HeaderExactMatcher,
+) : Match {
+    override fun matches(request: Request): Boolean = headerMatcher.matches(request)
+
+    public companion object {
+        public fun fromToken(token: String): BearerTokenMatcher =
+            BearerTokenMatcher(HeaderExactMatcher("Authorization", "Bearer $token"))
+    }
+}
+
 public object Matchers {
+    public fun any(): Match = AnyMatcher()
+
     public fun method(method: String): Match = MethodExactMatcher(method)
 
     public fun path(path: String): Match = PathExactMatcher(path)
@@ -103,7 +239,35 @@ public object Matchers {
         value: String,
     ): Match = HeaderExactMatcher(key, value)
 
+    public fun headerExists(key: String): Match = HeaderExistsMatcher(key)
+
+    public fun headerRegex(
+        key: String,
+        regex: Regex,
+    ): Match = HeaderRegexMatcher(key, regex)
+
     public fun bodyString(body: String): Match = BodyStringMatcher(body)
 
+    public fun bodyStringContains(substring: String): Match = BodyContainsMatcher(substring)
+
     public fun bodyBytes(body: ByteArray): Match = BodyExactMatcher(body)
+
+    public fun queryParam(
+        key: String,
+        value: String,
+    ): Match = QueryParamExactMatcher(key, value)
+
+    public fun queryParamContains(
+        key: String,
+        substring: String,
+    ): Match = QueryParamContainsMatcher(key, substring)
+
+    public fun queryParamIsMissing(key: String): Match = QueryParamIsMissingMatcher(key)
+
+    public fun basicAuth(
+        username: String,
+        password: String,
+    ): Match = BasicAuthMatcher.fromCredentials(username, password)
+
+    public fun bearerToken(token: String): Match = BearerTokenMatcher.fromToken(token)
 }

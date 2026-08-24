@@ -6,17 +6,23 @@ import kotlin.time.Duration
 /**
  * The blueprint for the response returned by a mock when matched.
  */
-public data class ResponseTemplate(
+public class ResponseTemplate(
     public val statusCode: Int,
-    public val headers: MutableMap<String, MutableList<String>> = mutableMapOf(),
-    public var body: ByteArray? = null,
-    public var delay: Duration? = null,
 ) : Respond {
+    private val _headers: MutableMap<String, MutableList<String>> = mutableMapOf()
+    public val headers: Map<String, List<String>> get() = _headers
+
+    public var body: ByteArray? = null
+        private set
+
+    public var delay: Duration? = null
+        private set
+
     public fun appendHeader(
         key: String,
         value: String,
     ): ResponseTemplate {
-        headers.getOrPut(key) { mutableListOf() }.add(value)
+        _headers.getOrPut(key) { mutableListOf() }.add(value)
         return this
     }
 
@@ -24,7 +30,7 @@ public data class ResponseTemplate(
         key: String,
         value: String,
     ): ResponseTemplate {
-        headers[key] = mutableListOf(value)
+        _headers[key] = mutableListOf(value)
         return this
     }
 
@@ -49,7 +55,7 @@ public data class ResponseTemplate(
         if (this === other) return true
         if (other !is ResponseTemplate) return false
         if (statusCode != other.statusCode) return false
-        if (headers != other.headers) return false
+        if (_headers != other._headers) return false
         if (delay != other.delay) return false
         val thisBody = body
         val otherBody = other.body
@@ -63,7 +69,7 @@ public data class ResponseTemplate(
 
     override fun hashCode(): Int {
         var result = statusCode
-        result = 31 * result + headers.hashCode()
+        result = 31 * result + _headers.hashCode()
         result = 31 * result + (body?.contentHashCode() ?: 0)
         result = 31 * result + (delay?.hashCode() ?: 0)
         return result

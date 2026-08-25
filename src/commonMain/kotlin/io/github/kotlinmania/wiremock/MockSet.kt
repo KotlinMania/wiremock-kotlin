@@ -23,7 +23,11 @@ public class MountedMockSet(
         for ((mock, state) in sortedMocks) {
             if (state == MountedMockState.OutOfScope) continue
             if (mock.matches(request)) {
-                return Pair(mock.responseTemplate(request), null)
+                return try {
+                    Pair(mock.responseTemplate(request), null)
+                } catch (e: Throwable) {
+                    Pair(ResponseTemplate.new(500), e)
+                }
             }
         }
         return Pair(ResponseTemplate.new(404), null)
@@ -65,10 +69,19 @@ public class MountedMockSet(
         }
     }
 
+    public fun verify() {
+        val outcome = verifyAll()
+        if (outcome is VerificationOutcome.Failure) {
+            val details = outcome.failedVerifications.joinToString("\n") { "- " + it.errorMessage() }
+            error("Verifications failed:\n$details")
+        }
+    }
+
     public fun verify(mockId: MockId): VerificationReport {
         checkMockId(mockId)
         return mocks[mockId.index].first.verify()
     }
+
 
     private fun checkMockId(mockId: MockId) {
         require(mockId.generation == generation) {

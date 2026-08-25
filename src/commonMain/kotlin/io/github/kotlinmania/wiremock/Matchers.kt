@@ -31,8 +31,27 @@ public class MethodExactMatcher(
  * Match exactly the request path.
  */
 public class PathExactMatcher(
-    public val path: String,
+    path: String,
 ) : Match {
+    public val path: String
+
+    init {
+        if (path.contains('?')) {
+            throw IllegalArgumentException(
+                "Wiremock can't match the path `$path` because it contains a `?`. You must use `wiremock::matchers::query_param` to match on query parameters (the part of the path after the `?`).",
+            )
+        }
+        if (path.contains("://")) {
+            val withoutScheme = path.substringAfter("://")
+            val host = withoutScheme.substringBefore('/')
+            val pathPart = if (withoutScheme.contains('/')) "/" + withoutScheme.substringAfter('/') else "/"
+            throw IllegalArgumentException(
+                "Wiremock can't match the path `$path` because it contains the host `$host`. You don't have to specify the host - wiremock knows it. Try replacing your path with `path(\"$pathPart\")`",
+            )
+        }
+        this.path = if (path.startsWith('/')) path else "/$path"
+    }
+
     override fun matches(request: Request): Boolean {
         val url = request.url
         val pathPart =
@@ -43,9 +62,15 @@ public class PathExactMatcher(
             } else {
                 url.substringBefore('?')
             }
-        return pathPart == path
+        val normalizedPath = if (pathPart.startsWith('/')) pathPart else "/$pathPart"
+        return normalizedPath == this.path
+    }
+
+    public companion object {
+        public fun new(path: String): PathExactMatcher = PathExactMatcher(path)
     }
 }
+
 
 /**
  * Match regex pattern against the request path.
@@ -63,7 +88,7 @@ public class PathRegexMatcher(
             } else {
                 url.substringBefore('?')
             }
-        return regex.matches(pathPart)
+        return regex.containsMatchIn(pathPart)
     }
 }
 
@@ -105,17 +130,38 @@ public class HeaderRegexMatcher(
             request.headers.entries
                 .firstOrNull { it.key.equals(key, ignoreCase = true) }
                 ?.value ?: return false
-        return values.any { regex.matches(it) }
+        return values.any { regex.containsMatchIn(it) }
     }
 }
 
 /**
- * Match request body exact bytes.
+ * Match request body exact bytes or JSON.
  */
 public class BodyExactMatcher(
     public val body: ByteArray,
 ) : Match {
-    override fun matches(request: Request): Boolean = request.body.contentEquals(body)
+    override fun matches(request: Request): Boolean {
+        if (request.body.contentEquals(body)) return true
+        val reqStr = request.bodyString().filter { !it.isWhitespace() }
+        val expectedStr = body.decodeToString().filter { !it.isWhitespace() }
+        if (reqStr == expectedStr) return true
+        if (reqStr.startsWith('{') && reqStr.endsWith('}') && expectedStr.startsWith('{') && expectedStr.endsWith('}')) {
+            val reqTokens = reqStr.drop(1).dropLast(1).split(',').sorted()
+            val expTokens = expectedStr.drop(1).dropLast(1).split(',').sorted()
+            return reqTokens == expTokens
+        }
+        return false
+    }
+
+    public companion object {
+        public fun string(body: String): BodyExactMatcher = BodyExactMatcher(body.encodeToByteArray())
+
+        public fun bytes(body: ByteArray): BodyExactMatcher = BodyExactMatcher(body.copyOf())
+
+        public fun json(body: String): BodyExactMatcher = BodyExactMatcher(body.encodeToByteArray())
+
+        public fun jsonString(body: String): BodyExactMatcher = BodyExactMatcher(body.encodeToByteArray())
+    }
 }
 
 /**
@@ -134,7 +180,35 @@ public class BodyContainsMatcher(
     public val substring: String,
 ) : Match {
     override fun matches(request: Request): Boolean = request.bodyString().contains(substring)
+
+    public companion object {
+        public fun string(body: String): BodyContainsMatcher = BodyContainsMatcher(body)
+    }
 }
+
+/**
+ * Match partial JSON body.
+ */
+public class BodyPartialJsonMatcher(
+    public val jsonPart: String,
+) : Match {
+    override fun matches(request: Request): Boolean {
+        val reqBody = request.bodyString()
+        val cleanedReq = reqBody.filter { !it.isWhitespace() }
+        val tokens = jsonPart.filter { !it.isWhitespace() && it != '{' && it != '}' }.split(',')
+        return tokens.all { token ->
+            if (token.isEmpty()) true else cleanedReq.contains(token)
+        }
+    }
+
+    public companion object {
+        public fun json(body: String): BodyPartialJsonMatcher = BodyPartialJsonMatcher(body)
+
+        public fun jsonString(body: String): BodyPartialJsonMatcher = BodyPartialJsonMatcher(body)
+    }
+}
+
+
 
 /**
  * Match exact query parameter key and value.

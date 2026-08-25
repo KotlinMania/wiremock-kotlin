@@ -129,6 +129,14 @@ public class Mock(
         return this
     }
 
+    public fun withPriority(priority: UByte): Mock {
+        require(priority > 0u) { "priority must be strictly greater than 0!" }
+        this.priority = priority
+        return this
+    }
+
+    public fun withPriority(priority: Int): Mock = withPriority(priority.toUByte())
+
     public fun named(name: String): Mock {
         this.name = name
         return this
@@ -143,6 +151,10 @@ public class Mock(
         this.expectationRange = Times.exactly(nCalls)
         return this
     }
+
+    public fun mount(server: MountedMockSet): MockId = server.register(this)
+
+    public fun mountAsScoped(server: MountedMockSet): MockId = server.register(this)
 
     public fun matches(request: Request): Boolean = matchers.all { it.matches(request) }
 
@@ -169,4 +181,15 @@ public class MockBuilder internal constructor(
     public fun respondWith(response: Respond): Mock = Mock(matchersList.toList(), response)
 
     public fun respondWith(template: ResponseTemplate): Mock = Mock(matchersList.toList(), template)
+
+    public fun respondWithErr(err: Throwable): Mock =
+        Mock(
+            matchersList.toList(),
+            object : Respond {
+                override fun respond(request: Request): ResponseTemplate {
+                    throw err
+                }
+            },
+        )
 }
+

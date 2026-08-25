@@ -38,4 +38,11 @@ public class MountedMock(
 
     public fun responseTemplate(request: Request): ResponseTemplate =
         specification.response.respond(request)
+
+    public fun receivedRequests(): List<Request> = matchedRequests
+
+    public fun notify(request: Request) {
+        // Notification hook
+    }
 }
+

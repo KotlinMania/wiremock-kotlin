@@ -6,9 +6,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class MockSetTest {
+    private fun testMockSet(): MountedMockSet = MountedMockSet()
+
     @Test
     fun generationIsIncrementedForEveryReset() {
-        val set = MountedMockSet()
+        val set = testMockSet()
         assertEquals(0u.toUShort(), set.generation)
 
         for (i in 1..9) {
@@ -18,8 +20,8 @@ class MockSetTest {
     }
 
     @Test
-    fun accessingMockIdAfterResetThrows() {
-        val set = MountedMockSet()
+    fun accessingAMockIdAfterAResetTriggersAPanic() {
+        val set = testMockSet()
         val mock = Mock.given(Matchers.path("/")).respondWith(ResponseTemplate.new(200))
         val mockId = set.register(mock)
 
@@ -31,8 +33,8 @@ class MockSetTest {
     }
 
     @Test
-    fun deactivatingMockDoesNotInvalidateOtherIds() {
-        val set = MountedMockSet()
+    fun deactivatingAMockDoesNotInvalidateOtherIds() {
+        val set = testMockSet()
         val firstMock = Mock.given(Matchers.path("/")).respondWith(ResponseTemplate.new(200))
         val secondMock = Mock.given(Matchers.path("/hello")).respondWith(ResponseTemplate.new(500))
         val firstMockId = set.register(firstMock)
@@ -45,6 +47,7 @@ class MockSetTest {
         val second = set.getMock(secondMockId)
         assertEquals(MountedMockState.InScope, second.second)
     }
+
 
     @Test
     fun handleRequestMatchesAndReturnsResponse() {

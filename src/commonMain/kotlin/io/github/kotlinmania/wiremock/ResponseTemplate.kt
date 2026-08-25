@@ -18,6 +18,9 @@ public class ResponseTemplate(
     public var delay: Duration? = null
         private set
 
+    public var mime: String = ""
+        private set
+
     public fun appendHeader(
         key: String,
         value: String,
@@ -36,6 +39,21 @@ public class ResponseTemplate(
 
     public fun setBodyString(bodyString: String): ResponseTemplate {
         body = bodyString.encodeToByteArray()
+        mime = "text/plain"
+        return this
+    }
+
+    public fun setBodyJson(bodyJson: String): ResponseTemplate {
+        body = bodyJson.encodeToByteArray()
+        mime = "application/json"
+        _headers["Content-Type"] = mutableListOf("application/json")
+        return this
+    }
+
+    public fun setBodyRaw(bodyBytes: ByteArray, mimeType: String): ResponseTemplate {
+        body = bodyBytes.copyOf()
+        mime = mimeType
+        _headers["Content-Type"] = mutableListOf(mimeType)
         return this
     }
 
@@ -48,6 +66,9 @@ public class ResponseTemplate(
         delay = duration
         return this
     }
+
+    public fun generateResponse(): ResponseTemplate = this
+
 
     override fun respond(request: Request): ResponseTemplate = this
 

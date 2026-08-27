@@ -186,10 +186,7 @@ public class MockBuilder internal constructor(
         Mock(
             matchersList.toList(),
             object : Respond {
-                override fun respond(request: Request): ResponseTemplate {
-                    throw err
-                }
+                override fun respond(request: Request): ResponseTemplate = throw err
             },
         )
 }
-

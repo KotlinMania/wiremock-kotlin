@@ -26,7 +26,8 @@ class MocksTest {
         val set = MountedMockSet()
         val response = ResponseTemplate.new(200)
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .respondWith(response)
                 .expect(Times.rangeFrom(1uL))
                 .named("panics_if_the_expectation_is_not_satisfied expectation failed")
@@ -42,7 +43,8 @@ class MocksTest {
         val set = MountedMockSet()
         val response = ResponseTemplate.new(200)
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .respondWith(response)
                 .expect(Times.rangeFrom(1uL))
         set.register(mock)
@@ -59,7 +61,8 @@ class MocksTest {
         val set = MountedMockSet()
         val response = ResponseTemplate.new(200)
         val mock =
-            Mock.given(Matchers.method("POST"))
+            Mock
+                .given(Matchers.method("POST"))
                 .respondWith(response)
                 .expect(Times.rangeFrom(1uL))
         set.register(mock)
@@ -78,7 +81,8 @@ class MocksTest {
         val set = MountedMockSet()
         val response = ResponseTemplate.new(200)
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .respondWith(response)
                 .expect(Times.rangeFrom(1uL))
                 .named("panic_during_expectation_does_not_crash expectation failed")
@@ -94,7 +98,8 @@ class MocksTest {
         val set = MountedMockSet()
         val response = ResponseTemplate.new(200).setBodyBytes("world".encodeToByteArray())
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(PathExactMatcher.new("hello"))
                 .respondWith(response)
         set.register(mock)
@@ -110,7 +115,8 @@ class MocksTest {
 
         val response1 = ResponseTemplate.new(200).setBodyBytes("aaa".encodeToByteArray())
         val mock1 =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(PathExactMatcher.new("first"))
                 .respondWith(response1)
                 .named("/first")
@@ -118,7 +124,8 @@ class MocksTest {
 
         val response2 = ResponseTemplate.new(200).setBodyBytes("bbb".encodeToByteArray())
         val mock2 =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(PathExactMatcher.new("second"))
                 .respondWith(response2)
                 .named("/second")
@@ -141,7 +148,8 @@ class MocksTest {
         val set = MountedMockSet()
         val response = ResponseTemplate.new(200)
         val mock =
-            Mock.given(Matchers.method("POST"))
+            Mock
+                .given(Matchers.method("POST"))
                 .and(BodyExactMatcher.json(expectedBody))
                 .respondWith(response)
         set.register(mock)
@@ -159,7 +167,8 @@ class MocksTest {
         val set = MountedMockSet()
         val response = ResponseTemplate.new(200)
         val mock =
-            Mock.given(Matchers.method("POST"))
+            Mock
+                .given(Matchers.method("POST"))
                 .and(BodyPartialJsonMatcher.json(expectedBody))
                 .respondWith(response)
         set.register(mock)
@@ -187,13 +196,15 @@ class MocksTest {
     fun useMockGuardToVerifyRequestsFromMock() {
         val set = MountedMockSet()
         val firstMock =
-            Mock.given(Matchers.method("POST"))
+            Mock
+                .given(Matchers.method("POST"))
                 .and(PathExactMatcher.new("first"))
                 .respondWith(ResponseTemplate.new(200))
         val firstId = set.register(firstMock)
 
         val secondMock =
-            Mock.given(Matchers.method("POST"))
+            Mock
+                .given(Matchers.method("POST"))
                 .and(PathExactMatcher.new("second"))
                 .respondWith(ResponseTemplate.new(200))
         val secondId = set.register(secondMock)
@@ -212,7 +223,8 @@ class MocksTest {
     fun useMockGuardToAwaitSatisfactionReadiness() {
         val set = MountedMockSet()
         val satisfy =
-            Mock.given(Matchers.method("POST"))
+            Mock
+                .given(Matchers.method("POST"))
                 .and(PathExactMatcher.new("satisfy"))
                 .respondWith(ResponseTemplate.new(200))
                 .expect(1uL)
@@ -233,7 +245,8 @@ class MocksTest {
     fun ioErr() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .respondWithErr(IllegalStateException("connection reset"))
         set.register(mock)
 
@@ -245,7 +258,8 @@ class MocksTest {
     fun customErr() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .respondWithErr(RuntimeException("custom error"))
         set.register(mock)
 
@@ -258,7 +272,8 @@ class MocksTest {
         val set = MountedMockSet()
         val response = ResponseTemplate.new(200).setBodyBytes("world".encodeToByteArray())
         val mock =
-            Mock.given(Matchers.method("Get"))
+            Mock
+                .given(Matchers.method("Get"))
                 .and(PathExactMatcher.new("hello"))
                 .respondWith(response)
         set.register(mock)
@@ -273,7 +288,8 @@ class MocksTest {
         val set = MountedMockSet()
         val response = ResponseTemplate.new(200).setBodyBytes("world".encodeToByteArray())
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(PathExactMatcher.new("hello"))
                 .respondWith(response)
         set.register(mock)

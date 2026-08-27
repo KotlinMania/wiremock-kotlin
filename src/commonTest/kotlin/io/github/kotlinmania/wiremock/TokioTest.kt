@@ -9,7 +9,8 @@ class TokioTest {
     fun helloReqwest() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.path("/"))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -23,7 +24,8 @@ class TokioTest {
     fun helloReqwestActix() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.path("/"))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -37,7 +39,8 @@ class TokioTest {
     fun helloReqwestHttp2() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.path("/"))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)

@@ -82,7 +82,6 @@ public class MountedMockSet(
         return mocks[mockId.index].first.verify()
     }
 
-
     private fun checkMockId(mockId: MockId) {
         require(mockId.generation == generation) {
             "The mock you are trying to access is no longer active. It has been deleted from the active set via reset."

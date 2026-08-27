@@ -1,4 +1,4 @@
-// port-lint: tests wiremock/tests/priority.rs
+// port-lint: tests tests/priority.rs
 package io.github.kotlinmania.wiremock
 
 import kotlin.test.Test

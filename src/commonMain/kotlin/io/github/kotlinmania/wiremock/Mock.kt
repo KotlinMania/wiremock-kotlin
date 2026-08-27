@@ -1,4 +1,4 @@
-// port-lint: source mock.rs
+// port-lint: source wiremock/src/mock.rs
 package io.github.kotlinmania.wiremock
 
 /**

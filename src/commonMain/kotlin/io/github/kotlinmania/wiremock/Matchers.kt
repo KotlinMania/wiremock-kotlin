@@ -71,7 +71,6 @@ public class PathExactMatcher(
     }
 }
 
-
 /**
  * Match regex pattern against the request path.
  */
@@ -146,8 +145,18 @@ public class BodyExactMatcher(
         val expectedStr = body.decodeToString().filter { !it.isWhitespace() }
         if (reqStr == expectedStr) return true
         if (reqStr.startsWith('{') && reqStr.endsWith('}') && expectedStr.startsWith('{') && expectedStr.endsWith('}')) {
-            val reqTokens = reqStr.drop(1).dropLast(1).split(',').sorted()
-            val expTokens = expectedStr.drop(1).dropLast(1).split(',').sorted()
+            val reqTokens =
+                reqStr
+                    .drop(1)
+                    .dropLast(1)
+                    .split(',')
+                    .sorted()
+            val expTokens =
+                expectedStr
+                    .drop(1)
+                    .dropLast(1)
+                    .split(',')
+                    .sorted()
             return reqTokens == expTokens
         }
         return false
@@ -207,8 +216,6 @@ public class BodyPartialJsonMatcher(
         public fun jsonString(body: String): BodyPartialJsonMatcher = BodyPartialJsonMatcher(body)
     }
 }
-
-
 
 /**
  * Match exact query parameter key and value.

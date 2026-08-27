@@ -9,14 +9,16 @@ class PriorityTest {
     fun shouldPrioritizeMockWithHighestPriority() {
         val set = MountedMockSet()
         val exact =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.path("abcd"))
                 .respondWith(ResponseTemplate.new(200))
                 .withPriority(2)
         set.register(exact)
 
         val regex =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.pathRegex("[a-z]{4}"))
                 .respondWith(ResponseTemplate.new(201))
                 .withPriority(1)
@@ -31,14 +33,16 @@ class PriorityTest {
     fun shouldNotPrioritizeMockWithLowerPriority() {
         val set = MountedMockSet()
         val exact =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.path("abcd"))
                 .respondWith(ResponseTemplate.new(200))
                 .withPriority(255)
         set.register(exact)
 
         val regex =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.pathRegex("[a-z]{4}"))
                 .respondWith(ResponseTemplate.new(201))
         set.register(regex)
@@ -52,11 +56,13 @@ class PriorityTest {
     fun byDefaultShouldUseInsertionOrder() {
         val set1 = MountedMockSet()
         val exact1 =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.path("abcd"))
                 .respondWith(ResponseTemplate.new(200))
         val regex1 =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.pathRegex("[a-z]{4}"))
                 .respondWith(ResponseTemplate.new(201))
         set1.register(exact1)

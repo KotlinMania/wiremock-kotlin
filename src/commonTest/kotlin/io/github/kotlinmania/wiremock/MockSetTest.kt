@@ -48,7 +48,6 @@ class MockSetTest {
         assertEquals(MountedMockState.InScope, second.second)
     }
 
-
     @Test
     fun handleRequestMatchesAndReturnsResponse() {
         val set = MountedMockSet()

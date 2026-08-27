@@ -9,7 +9,8 @@ class RequestHeaderMatchingTest {
     fun shouldMatchSimpleRequestHeader() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.header("content-type", "application/json"))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -23,7 +24,8 @@ class RequestHeaderMatchingTest {
     fun shouldNotMatchSimpleRequestHeaderUponWrongKey() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.header("content-type", "application/json"))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -37,7 +39,8 @@ class RequestHeaderMatchingTest {
     fun shouldNotMatchSimpleRequestHeaderUponWrongValue() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.header("content-type", "application/json"))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -51,7 +54,8 @@ class RequestHeaderMatchingTest {
     fun shouldMatchMultiRequestHeader() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.header("cache-control", "no-cache"))
                 .and(Matchers.header("cache-control", "no-store"))
                 .respondWith(ResponseTemplate.new(200))
@@ -66,7 +70,8 @@ class RequestHeaderMatchingTest {
     fun shouldMatchMultiRequestHeaderX() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.header("cache-control", "no-cache"))
                 .and(Matchers.header("cache-control", "no-store"))
                 .respondWith(ResponseTemplate.new(200))
@@ -82,7 +87,8 @@ class RequestHeaderMatchingTest {
     fun shouldNotMatchMultiRequestHeaderUponWrongValues() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.header("cache-control", "no-cache"))
                 .and(Matchers.header("cache-control", "no-store"))
                 .respondWith(ResponseTemplate.new(200))
@@ -97,7 +103,8 @@ class RequestHeaderMatchingTest {
     fun shouldNotMatchMultiRequestHeaderUponIncompleteValues() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.header("cache-control", "no-cache"))
                 .and(Matchers.header("cache-control", "no-store"))
                 .respondWith(ResponseTemplate.new(200))
@@ -112,7 +119,8 @@ class RequestHeaderMatchingTest {
     fun shouldMatchRegexSingleHeaderValue() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.headerRegex("cache-control", Regex("no-(cache|store)")))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -126,7 +134,8 @@ class RequestHeaderMatchingTest {
     fun shouldMatchRegexMultipleHeaderValues() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.headerRegex("cache-control", Regex("no-(cache|store)")))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -140,7 +149,8 @@ class RequestHeaderMatchingTest {
     fun shouldNotMatchRegexWithWrongHeaderValue() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.headerRegex("cache-control", Regex("no-(cache|store)")))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -154,7 +164,8 @@ class RequestHeaderMatchingTest {
     fun shouldNotMatchRegexWithAtLeastOneWrongHeaderValue() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.headerRegex("cache-control", Regex("no-(cache|store)")))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -168,7 +179,8 @@ class RequestHeaderMatchingTest {
     fun shouldNotMatchRegexWithNoValuesForHeader() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.headerRegex("cache-control", Regex("no-(cache|store)")))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -182,7 +194,8 @@ class RequestHeaderMatchingTest {
     fun shouldMatchBasicAuthHeader() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.basicAuth("Aladdin", "open sesame"))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -196,7 +209,8 @@ class RequestHeaderMatchingTest {
     fun shouldNotMatchBadBasicAuthHeader() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.basicAuth("Aladdin", "close sesame"))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -210,7 +224,8 @@ class RequestHeaderMatchingTest {
     fun shouldMatchBearerTokenHeader() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.bearerToken("delightful"))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)
@@ -224,7 +239,8 @@ class RequestHeaderMatchingTest {
     fun shouldNotMatchBearerTokenHeader() {
         val set = MountedMockSet()
         val mock =
-            Mock.given(Matchers.method("GET"))
+            Mock
+                .given(Matchers.method("GET"))
                 .and(Matchers.bearerToken("expired"))
                 .respondWith(ResponseTemplate.new(200))
         set.register(mock)

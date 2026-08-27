@@ -1,4 +1,4 @@
-// port-lint: tests wiremock/tests/timeout.rs
+// port-lint: tests tests/timeout.rs
 package io.github.kotlinmania.wiremock
 
 import kotlin.test.Test

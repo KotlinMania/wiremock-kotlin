@@ -1,4 +1,4 @@
-// port-lint: source http.rs
+// port-lint: source wiremock/src/http.rs
 package io.github.kotlinmania.wiremock
 
 /**

@@ -1,4 +1,4 @@
-// port-lint: tests tests/request_header_matching.rs
+// port-lint: tests wiremock/tests/request_header_matching.rs
 package io.github.kotlinmania.wiremock
 
 import kotlin.test.Test

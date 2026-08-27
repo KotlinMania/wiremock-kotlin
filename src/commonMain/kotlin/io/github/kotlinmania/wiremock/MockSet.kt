@@ -1,4 +1,4 @@
-// port-lint: source mock_set.rs
+// port-lint: source wiremock/src/mock_set.rs
 package io.github.kotlinmania.wiremock
 
 public enum class MountedMockState {

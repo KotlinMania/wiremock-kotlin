@@ -44,4 +44,12 @@ public class MountedMock(
     public fun notify(request: Request) {
         // Notification hook
     }
+
+    public companion object {
+        public fun new(
+            specification: Mock,
+            positionInSet: Int,
+        ): MountedMock = MountedMock(specification, positionInSet)
+    }
 }
+

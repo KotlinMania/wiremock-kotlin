@@ -156,7 +156,16 @@ public class Mock(
 
     public fun mountAsScoped(server: MountedMockSet): MockId = server.register(this)
 
+    public suspend fun mount(server: io.github.kotlinmania.wiremock.mockserver.MockServer) {
+        server.register(this)
+    }
+
+    public suspend fun mountAsScoped(server: io.github.kotlinmania.wiremock.mockserver.MockServer): io.github.kotlinmania.wiremock.mockserver.MockGuard =
+        server.registerAsScoped(this)
+
     public fun matches(request: Request): Boolean = matchers.all { it.matches(request) }
+
+    public fun responseTemplate(request: Request): ResponseTemplate = response.respond(request)
 
     public companion object {
         public fun given(matcher: Match): MockBuilder = MockBuilder(mutableListOf(matcher))

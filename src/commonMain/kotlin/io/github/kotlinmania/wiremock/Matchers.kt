@@ -134,6 +134,22 @@ public class HeaderRegexMatcher(
 }
 
 /**
+ * Match multiple header values for a single key.
+ */
+public class HeaderMultiMatcher(
+    public val key: String,
+    public val values: List<String>,
+) : Match {
+    override fun matches(request: Request): Boolean {
+        val reqValues =
+            request.headers.entries
+                .firstOrNull { it.key.equals(key, ignoreCase = true) }
+                ?.value ?: return false
+        return values.all { reqValues.contains(it) }
+    }
+}
+
+/**
  * Match request body exact bytes or JSON.
  */
 public class BodyExactMatcher(
@@ -320,6 +336,11 @@ public object Matchers {
         value: String,
     ): Match = HeaderExactMatcher(key, value)
 
+    public fun headerExact(
+        key: String,
+        value: String,
+    ): Match = HeaderExactMatcher(key, value)
+
     public fun headerExists(key: String): Match = HeaderExistsMatcher(key)
 
     public fun headerRegex(
@@ -327,11 +348,26 @@ public object Matchers {
         regex: Regex,
     ): Match = HeaderRegexMatcher(key, regex)
 
+    public fun headers(
+        key: String,
+        values: List<String>,
+    ): Match = HeaderMultiMatcher(key, values)
+
     public fun bodyString(body: String): Match = BodyStringMatcher(body)
 
     public fun bodyStringContains(substring: String): Match = BodyContainsMatcher(substring)
 
     public fun bodyBytes(body: ByteArray): Match = BodyExactMatcher(body)
+
+    public fun bodyJson(body: String): Match = BodyExactMatcher.json(body)
+
+    public fun bodyJsonString(body: String): Match = BodyExactMatcher.jsonString(body)
+
+    public fun bodyPartialJson(body: String): Match = BodyPartialJsonMatcher.json(body)
+
+    public fun bodyPartialJsonString(body: String): Match = BodyPartialJsonMatcher.jsonString(body)
+
+    public fun bodyJsonSchema(validator: (Request) -> Boolean): Match = Match { validator(it) }
 
     public fun queryParam(
         key: String,
@@ -352,3 +388,4 @@ public object Matchers {
 
     public fun bearerToken(token: String): Match = BearerTokenMatcher.fromToken(token)
 }
+

@@ -90,4 +90,10 @@ public class MountedMockSet(
             "Mock ID index out of bounds."
         }
     }
+
+    public companion object {
+        public fun new(bodyPrintLimit: BodyPrintLimit = BodyPrintLimit.Unlimited): MountedMockSet =
+            MountedMockSet(bodyPrintLimit)
+    }
 }
+

@@ -41,6 +41,10 @@ public data class Request(
 
     public fun bodyString(): String = body.decodeToString()
 
+    public fun bodyJson(): String = bodyString()
+
+    public fun bodyBytes(): ByteArray = body.copyOf()
+
     public fun printWithLimit(
         buffer: StringBuilder,
         bodyPrintLimit: BodyPrintLimit,

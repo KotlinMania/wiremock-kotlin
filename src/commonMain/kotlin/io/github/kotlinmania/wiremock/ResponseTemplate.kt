@@ -29,6 +29,24 @@ public class ResponseTemplate(
         return this
     }
 
+    public fun appendHeaders(headers: List<HeaderEntry>): ResponseTemplate {
+        for (header in headers) {
+            appendHeader(header.name, header.value)
+        }
+        return this
+    }
+
+    public fun appendHeaders(vararg headers: HeaderEntry): ResponseTemplate = appendHeaders(headers.toList())
+
+    public fun appendHeaders(headers: Map<String, List<String>>): ResponseTemplate {
+        for ((name, values) in headers) {
+            for (value in values) {
+                appendHeader(name, value)
+            }
+        }
+        return this
+    }
+
     public fun insertHeader(
         key: String,
         value: String,
@@ -69,6 +87,7 @@ public class ResponseTemplate(
 
     public fun generateResponse(): ResponseTemplate = this
 
+
     override fun respond(request: Request): ResponseTemplate = this
 
     override fun equals(other: Any?): Boolean {
@@ -99,3 +118,12 @@ public class ResponseTemplate(
         public fun new(statusCode: Int): ResponseTemplate = ResponseTemplate(statusCode)
     }
 }
+
+/**
+ * An HTTP header entry with name and value.
+ */
+public data class HeaderEntry(
+    public val name: String,
+    public val value: String,
+)
+

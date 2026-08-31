@@ -1,4 +1,4 @@
-// port-lint: tests http.rs
+// port-lint: tests wiremock/src/http.rs
 package io.github.kotlinmania.wiremock
 
 import kotlin.test.Test

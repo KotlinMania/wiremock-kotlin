@@ -1,4 +1,4 @@
-// port-lint: source respond.rs
+// port-lint: source wiremock/src/respond.rs
 package io.github.kotlinmania.wiremock
 
 /**

@@ -1,4 +1,4 @@
-// port-lint: source mock_server/exposed_server.rs
+// port-lint: source wiremock/src/mock_server/exposed_server.rs
 package io.github.kotlinmania.wiremock.mockserver
 
 import io.github.kotlinmania.wiremock.ErrorResponse

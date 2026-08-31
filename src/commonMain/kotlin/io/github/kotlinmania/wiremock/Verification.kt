@@ -1,4 +1,4 @@
-// port-lint: source wiremock/src/verification.rs
+// port-lint: source verification.rs
 package io.github.kotlinmania.wiremock
 
 /**

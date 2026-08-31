@@ -1,4 +1,4 @@
-// port-lint: source wiremock/src/mock_server/builder.rs
+// port-lint: source mock_server/builder.rs
 package io.github.kotlinmania.wiremock.mockserver
 
 import io.github.kotlinmania.wiremock.BodyPrintLimit

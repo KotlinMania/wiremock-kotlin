@@ -1,4 +1,4 @@
-// port-lint: source lib.rs
+// port-lint: source wiremock/src/lib.rs
 package io.github.kotlinmania.wiremock
 
 public typealias ErrorResponse = Throwable

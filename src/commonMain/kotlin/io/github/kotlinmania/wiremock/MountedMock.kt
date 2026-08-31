@@ -1,4 +1,4 @@
-// port-lint: source mounted_mock.rs
+// port-lint: source wiremock/src/mounted_mock.rs
 package io.github.kotlinmania.wiremock
 
 /**
@@ -52,4 +52,3 @@ public class MountedMock(
         ): MountedMock = MountedMock(specification, positionInSet)
     }
 }
-

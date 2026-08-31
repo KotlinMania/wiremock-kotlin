@@ -1,4 +1,4 @@
-// port-lint: source mock_server/pool.rs
+// port-lint: source wiremock/src/mock_server/pool.rs
 package io.github.kotlinmania.wiremock.mockserver
 
 internal object MockServerPool {

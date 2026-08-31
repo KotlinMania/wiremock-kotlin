@@ -1,4 +1,4 @@
-// port-lint: tests mock.rs
+// port-lint: tests wiremock/src/mock.rs
 // Kotlin regression tests for the expectation range behavior translated from mock.rs.
 package io.github.kotlinmania.wiremock
 

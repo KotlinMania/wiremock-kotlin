@@ -1,4 +1,4 @@
-// port-lint: source response_template.rs
+// port-lint: source wiremock/src/response_template.rs
 package io.github.kotlinmania.wiremock
 
 import kotlin.time.Duration

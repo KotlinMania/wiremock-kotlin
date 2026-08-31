@@ -1,4 +1,4 @@
-// port-lint: tests tests/tokio.rs
+// port-lint: tests wiremock/tests/tokio.rs
 package io.github.kotlinmania.wiremock
 
 import kotlin.test.Test

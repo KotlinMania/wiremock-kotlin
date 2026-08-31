@@ -17,6 +17,9 @@
   },
   "reexport_modules": [
     "lib",
-    "http"
+    "http",
+    "mock_server/mod",
+    "mock_server.mod",
+    "mock_server"
   ]
 }

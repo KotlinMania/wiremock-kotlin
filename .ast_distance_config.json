@@ -17,9 +17,15 @@
   },
   "reexport_modules": [
     "lib",
+    "lib.rs",
+    "wiremock/src/lib.rs",
     "http",
+    "http.rs",
+    "wiremock/src/http.rs",
     "mock_server/mod",
     "mock_server.mod",
+    "mock_server/mod.rs",
+    "wiremock/src/mock_server/mod.rs",
     "mock_server"
   ]
 }

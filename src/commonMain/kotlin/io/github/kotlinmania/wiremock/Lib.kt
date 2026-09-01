@@ -12,4 +12,3 @@ public typealias MockServerBuilder = io.github.kotlinmania.wiremock.mockserver.M
 public object WireMock {
     public fun given(matcher: Match): MockBuilder = Mock.given(matcher)
 }
-

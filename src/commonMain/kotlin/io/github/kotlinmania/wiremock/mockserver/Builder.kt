@@ -30,7 +30,6 @@ public class MockServerBuilder internal constructor() {
         return BareMockServer.start(addr, recording, bodyPrintLimit)
     }
 
-
     public fun start(): MockServer {
         val bare = buildBare()
         return MockServer(bare)

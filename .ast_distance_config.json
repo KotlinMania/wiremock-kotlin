@@ -2,7 +2,7 @@
   "type": "port",
   "name": "wiremock-kotlin",
   "source": {
-    "path": "tmp",
+    "path": "tmp/wiremock/src",
     "lang": "rust"
   },
   "target": {

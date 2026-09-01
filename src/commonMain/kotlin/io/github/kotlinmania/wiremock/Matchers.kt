@@ -1,4 +1,4 @@
-// port-lint: source wiremock/src/matchers.rs
+// port-lint: source matchers.rs
 package io.github.kotlinmania.wiremock
 
 import kotlin.io.encoding.Base64

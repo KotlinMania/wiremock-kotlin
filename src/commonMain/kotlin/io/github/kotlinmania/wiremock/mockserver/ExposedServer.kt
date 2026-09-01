@@ -14,9 +14,7 @@ public class MockServer internal constructor(
         bare.register(mock)
     }
 
-    public suspend fun registerAsScoped(mock: Mock): MockGuard {
-        return bare.registerAsScoped(mock)
-    }
+    public suspend fun registerAsScoped(mock: Mock): MockGuard = bare.registerAsScoped(mock)
 
     public suspend fun reset() {
         bare.reset()

@@ -28,22 +28,17 @@ public class MountedMock(
         return matched
     }
 
-    public fun verify(): VerificationReport {
-        return VerificationReport(
+    public fun verify(): VerificationReport =
+        VerificationReport(
             mockName = specification.name,
             expectationRange = specification.expectationRange,
             nMatchedRequests = nMatchedRequests,
             positionInSet = positionInSet,
         )
-    }
 
-    public fun responseTemplate(request: Request): ResponseTemplate {
-        return specification.response.respond(request)
-    }
+    public fun responseTemplate(request: Request): ResponseTemplate = specification.response.respond(request)
 
-    public fun receivedRequests(): List<Request> {
-        return matchedRequests
-    }
+    public fun receivedRequests(): List<Request> = matchedRequests
 
     public fun notify(request: Request) {
         request.hashCode()
@@ -54,8 +49,6 @@ public class MountedMock(
         public fun new(
             specification: Mock,
             positionInSet: Int,
-        ): MountedMock {
-            return MountedMock(specification, positionInSet)
-        }
+        ): MountedMock = MountedMock(specification, positionInSet)
     }
 }

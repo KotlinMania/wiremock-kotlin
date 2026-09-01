@@ -61,11 +61,10 @@ internal class BareMockServer internal constructor(
         }
     }
 
-    public suspend fun verify(): VerificationOutcome {
-        return mutex.withLock {
+    public suspend fun verify(): VerificationOutcome =
+        mutex.withLock {
             state.mockSet.verifyAll()
         }
-    }
 
     public fun uri(): String = "http://$serverAddress"
 
@@ -73,17 +72,15 @@ internal class BareMockServer internal constructor(
 
     public fun bodyPrintLimit(): BodyPrintLimit = state.bodyPrintLimit
 
-    public suspend fun receivedRequests(): List<Request>? {
-        return mutex.withLock {
+    public suspend fun receivedRequests(): List<Request>? =
+        mutex.withLock {
             state.receivedRequests
         }
-    }
 
-    internal suspend fun handleRequest(request: Request): Pair<ResponseTemplate, ErrorResponse?> {
-        return mutex.withLock {
+    internal suspend fun handleRequest(request: Request): Pair<ResponseTemplate, ErrorResponse?> =
+        mutex.withLock {
             state.handleRequest(request)
         }
-    }
 
     internal fun state(): MockServerState = state
 

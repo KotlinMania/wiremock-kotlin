@@ -87,7 +87,6 @@ public class ResponseTemplate(
 
     public fun generateResponse(): ResponseTemplate = this
 
-
     override fun respond(request: Request): ResponseTemplate = this
 
     override fun equals(other: Any?): Boolean {
@@ -126,4 +125,3 @@ public data class HeaderEntry(
     public val name: String,
     public val value: String,
 )
-

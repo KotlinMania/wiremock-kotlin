@@ -8,8 +8,5 @@ import io.github.kotlinmania.wiremock.ResponseTemplate
 internal class HyperServerHandler(
     private val serverState: MockServerState,
 ) {
-    public fun handle(request: Request): Pair<ResponseTemplate, ErrorResponse?> {
-        return serverState.handleRequest(request)
-    }
+    public fun handle(request: Request): Pair<ResponseTemplate, ErrorResponse?> = serverState.handleRequest(request)
 }
-

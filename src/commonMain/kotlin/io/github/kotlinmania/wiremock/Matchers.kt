@@ -388,4 +388,3 @@ public object Matchers {
 
     public fun bearerToken(token: String): Match = BearerTokenMatcher.fromToken(token)
 }
-

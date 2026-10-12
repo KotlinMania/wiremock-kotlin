@@ -246,7 +246,7 @@ public class QueryParamExactMatcher(
         val params =
             query.split('&').map {
                 val parts = it.split('=', limit = 2)
-                parts[0] to (parts.getOrNull(1) ?: "")
+                parts[0] to parts.getOrNull(1).orEmpty()
             }
         return params.any { it.first == key && it.second == value }
     }
@@ -265,7 +265,7 @@ public class QueryParamContainsMatcher(
         val params =
             query.split('&').map {
                 val parts = it.split('=', limit = 2)
-                parts[0] to (parts.getOrNull(1) ?: "")
+                parts[0] to parts.getOrNull(1).orEmpty()
             }
         return params.any { it.first == key && it.second.contains(substring) }
     }

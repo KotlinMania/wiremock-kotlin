@@ -65,6 +65,7 @@ public data class Request(
                     buffer.appendLine(body.decodeToString())
                 }
             }
+
             is BodyPrintLimit.Unlimited -> {
                 buffer.appendLine(body.decodeToString())
             }

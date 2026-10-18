@@ -2,7 +2,7 @@
 package io.github.kotlinmania.wiremock.mockserver
 
 import io.github.kotlinmania.wiremock.BodyPrintLimit
-import io.github.kotlinmania.wiremock.ErrorResponse
+
 import io.github.kotlinmania.wiremock.Mock
 import io.github.kotlinmania.wiremock.MockId
 import io.github.kotlinmania.wiremock.MountedMockSet
@@ -25,7 +25,7 @@ internal class MockServerState(
 ) {
     public val receivedRequests: List<Request>? get() = _receivedRequests?.toList()
 
-    public fun handleRequest(request: Request): Pair<ResponseTemplate, ErrorResponse?> {
+    public fun handleRequest(request: Request): Pair<ResponseTemplate, kotlin.Throwable?> {
         _receivedRequests?.add(request)
         return mockSet.handleRequest(request)
     }
@@ -77,7 +77,7 @@ internal class BareMockServer internal constructor(
             state.receivedRequests
         }
 
-    internal suspend fun handleRequest(request: Request): Pair<ResponseTemplate, ErrorResponse?> =
+    internal suspend fun handleRequest(request: Request): Pair<ResponseTemplate, kotlin.Throwable?> =
         mutex.withLock {
             state.handleRequest(request)
         }

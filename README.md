@@ -233,7 +233,7 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 
 ```kotlin
 dependencies {
-    implementation("io.github.kotlinmania:wiremock-kotlin:0.1.1")
+    implementation("io.github.kotlinmania:wiremock-kotlin:0.2.0")
 }
 ```
 

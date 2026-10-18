@@ -35,7 +35,7 @@ class MockTest {
     @Test
     fun wireMockGivenHelper() {
         val mock =
-            WireMock
+            io.github.kotlinmania.wiremock.Mock
                 .given(Matchers.method("POST"))
                 .respondWith(ResponseTemplate.new(201))
 

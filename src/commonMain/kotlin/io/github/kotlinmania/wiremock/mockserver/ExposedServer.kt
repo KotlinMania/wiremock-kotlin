@@ -1,7 +1,6 @@
 // port-lint: source mock_server/exposed_server.rs
 package io.github.kotlinmania.wiremock.mockserver
 
-import io.github.kotlinmania.wiremock.ErrorResponse
 import io.github.kotlinmania.wiremock.Mock
 import io.github.kotlinmania.wiremock.Request
 import io.github.kotlinmania.wiremock.ResponseTemplate
@@ -34,7 +33,7 @@ public class MockServer internal constructor(
 
     public suspend fun receivedRequests(): List<Request>? = bare.receivedRequests()
 
-    internal suspend fun handleRequest(request: Request): Pair<ResponseTemplate, ErrorResponse?> =
+    internal suspend fun handleRequest(request: Request): Pair<ResponseTemplate, kotlin.Throwable?> =
         bare.handleRequest(request)
 
     public companion object {

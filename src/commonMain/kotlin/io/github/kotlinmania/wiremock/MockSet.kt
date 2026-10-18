@@ -18,7 +18,7 @@ public class MountedMockSet(
     public var generation: UShort = 0u
         private set
 
-    public fun handleRequest(request: Request): Pair<ResponseTemplate, ErrorResponse?> {
+    public fun handleRequest(request: Request): Pair<ResponseTemplate, kotlin.Throwable?> {
         val sortedMocks = mocks.sortedBy { it.first.specification.priority }
         for ((mock, state) in sortedMocks) {
             if (state == MountedMockState.OutOfScope) continue

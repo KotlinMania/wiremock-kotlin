@@ -12,5 +12,5 @@ public fun interface Respond {
  * Like Respond, but it allows returning an error through a function.
  */
 public fun interface RespondErr {
-    public fun respondErr(request: Request): ErrorResponse
+    public fun respondErr(request: Request): kotlin.Throwable
 }

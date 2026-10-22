@@ -47,12 +47,12 @@ internal class BareMockServer internal constructor(
         }
     }
 
-    public suspend fun registerAsScoped(mock: Mock): MockGuard {
-        return mutex.withLock {
+    public suspend fun registerAsScoped(mock: Mock): MockGuard =
+        mutex.withLock {
             val mockId = state.mockSet.register(mock)
-            MockGuard(mockId, this, state.mockSet.getMock(mockId).first.satisfaction)
+            val (mounted, _) = state.mockSet.getMock(mockId)
+            MockGuard(mockId, this, mounted.satisfaction)
         }
-    }
 
     public suspend fun reset() {
         mutex.withLock {
@@ -85,7 +85,8 @@ internal class BareMockServer internal constructor(
 
     internal suspend fun receivedRequests(mockId: MockId): List<Request> =
         mutex.withLock {
-            state.mockSet.getMock(mockId).first.receivedRequests()
+            val (mounted, _) = state.mockSet.getMock(mockId)
+            mounted.receivedRequests()
         }
 
     internal suspend fun verify(mockId: MockId): VerificationReport =

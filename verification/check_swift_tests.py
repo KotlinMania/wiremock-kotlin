@@ -17,13 +17,13 @@ def verify(text):
         raise ValueError("Expected one passing complete Wiremock Swift test summary")
     if re.search(r"(?m)^.*(?:Test|Suite) .*\b(?:failed|skipped)\b", text):
         raise ValueError("Wiremock Swift test failed or was skipped")
-    passing_cases = r"(?m)^.*Test (?:\"[^\"\r\n]+\"|[A-Za-z_]\w*\(\))(?: \(aka '[^\r\n]+'\))? passed\b"
+    passing_cases = r"(?m)^.*\bTest (?:\"[^\"\r\n]+\"|[A-Za-z_]\w*\(\))(?: \(aka '[^\r\n]+'\))? passed\b"
     if len(re.findall(passing_cases, text)) != len(CASES):
         raise ValueError("Unexpected or duplicated Swift case execution")
     for name, description in CASES.items():
         label = r'(?:"' + re.escape(description) + r'"|' + re.escape(name) + r'\(\))'
         alias = r"(?: \(aka '" + re.escape(name) + r"\(\)'\))?"
-        if len(re.findall(r"Test " + label + alias + r" passed\b", text)) != 1:
+        if len(re.findall(r"\bTest " + label + alias + r" passed\b", text)) != 1:
             raise ValueError("Expected exactly one passing execution of " + name)
 
     frontends = []

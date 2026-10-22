@@ -1,6 +1,8 @@
 // port-lint: source mounted_mock.rs
 package io.github.kotlinmania.wiremock
 
+import kotlinx.coroutines.CompletableDeferred
+
 /**
  * Given the behaviour specification as a Mock, keep track of runtime information
  * concerning this mock - e.g. how many times it matched on an incoming request.
@@ -14,6 +16,7 @@ public class MountedMock(
 
     private val _matchedRequests: MutableList<Request> = mutableListOf()
     public val matchedRequests: List<Request> get() = _matchedRequests
+    internal val satisfaction: CompletableDeferred<Unit> = CompletableDeferred()
 
     public fun matches(request: Request): Boolean {
         val maxN = specification.maxNMatches
@@ -24,6 +27,7 @@ public class MountedMock(
         if (matched) {
             nMatchedRequests += 1uL
             _matchedRequests.add(request)
+            notify(request)
         }
         return matched
     }
@@ -38,11 +42,12 @@ public class MountedMock(
 
     public fun responseTemplate(request: Request): ResponseTemplate = specification.response.respond(request)
 
-    public fun receivedRequests(): List<Request> = matchedRequests
+    public fun receivedRequests(): List<Request> = matchedRequests.toList()
 
     public fun notify(request: Request) {
-        request.hashCode()
-        // Notification hook
+        if (_matchedRequests.lastOrNull() === request && verify().isSatisfied()) {
+            satisfaction.complete(Unit)
+        }
     }
 
     public companion object {

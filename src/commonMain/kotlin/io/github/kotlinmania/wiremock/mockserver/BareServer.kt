@@ -9,6 +9,7 @@ import io.github.kotlinmania.wiremock.Request
 import io.github.kotlinmania.wiremock.ResponseTemplate
 import io.github.kotlinmania.wiremock.VerificationOutcome
 import io.github.kotlinmania.wiremock.VerificationReport
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -47,11 +48,10 @@ internal class BareMockServer internal constructor(
     }
 
     public suspend fun registerAsScoped(mock: Mock): MockGuard {
-        val mockId =
-            mutex.withLock {
-                state.mockSet.register(mock)
-            }
-        return MockGuard(mockId, this)
+        return mutex.withLock {
+            val mockId = state.mockSet.register(mock)
+            MockGuard(mockId, this, state.mockSet.getMock(mockId).first.satisfaction)
+        }
     }
 
     public suspend fun reset() {
@@ -83,6 +83,22 @@ internal class BareMockServer internal constructor(
 
     internal fun state(): MockServerState = state
 
+    internal suspend fun receivedRequests(mockId: MockId): List<Request> =
+        mutex.withLock {
+            state.mockSet.getMock(mockId).first.receivedRequests()
+        }
+
+    internal suspend fun verify(mockId: MockId): VerificationReport =
+        mutex.withLock {
+            state.mockSet.verify(mockId)
+        }
+
+    internal suspend fun deactivate(mockId: MockId) {
+        mutex.withLock {
+            state.mockSet.deactivate(mockId)
+        }
+    }
+
     public companion object {
         public fun start(
             serverAddress: String = "127.0.0.1:0",
@@ -104,23 +120,17 @@ internal class BareMockServer internal constructor(
 public class MockGuard internal constructor(
     public val mockId: MockId,
     private val server: BareMockServer,
+    private val satisfaction: Deferred<Unit>,
 ) {
-    public suspend fun receivedRequests(): List<Request> {
-        val state = server.state()
-        val mock = state.mockSet.getMock(mockId)
-        return mock.first.receivedRequests()
-    }
+    public suspend fun receivedRequests(): List<Request> = server.receivedRequests(mockId)
 
     public suspend fun waitUntilSatisfied() {
+        satisfaction.await()
     }
 
-    public suspend fun verify(): VerificationReport {
-        val state = server.state()
-        return state.mockSet.verify(mockId)
-    }
+    public suspend fun verify(): VerificationReport = server.verify(mockId)
 
     public suspend fun deactivate() {
-        val state = server.state()
-        state.mockSet.deactivate(mockId)
+        server.deactivate(mockId)
     }
 }

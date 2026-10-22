@@ -6,13 +6,15 @@ from pathlib import Path
 
 CASES = {
     "swiftModuleLoads": "Swift module loads and basic response template works",
+    "responseHeadersRoundTrip": "Response header maps preserve ordered Unicode values",
+    "requestHeadersRoundTrip": "Request header maps cross the typed constructor boundary",
 }
 
 
 def verify(text):
     text = re.sub(r"\x1b\[[0-9;]*m", "", text)
-    if len(re.findall(r"Test run with 1 test[^\r\n]*passed", text)) != 1:
-        raise ValueError("Expected one passing one-case Wiremock Swift test summary")
+    if len(re.findall(r"Test run with " + str(len(CASES)) + r" tests?[^\r\n]*passed", text)) != 1:
+        raise ValueError("Expected one passing complete Wiremock Swift test summary")
     if re.search(r"(?m)^.*(?:Test|Suite) .*\b(?:failed|skipped)\b", text):
         raise ValueError("Wiremock Swift test failed or was skipped")
     passing_cases = r"(?m)^.*Test (?:\"[^\"\r\n]+\"|[A-Za-z_]\w*\(\))(?: \(aka '[^\r\n]+'\))? passed\b"
@@ -60,4 +62,4 @@ if __name__ == "__main__":
     result = verify(args.log.read_text())
     output = args.output or args.log.with_suffix(".json")
     output.write_text(json.dumps(result, indent=2) + "\n")
-    print("Verified one actual Wiremock Swift behaviors and effective compiler settings")
+    print("Verified three actual Wiremock Swift behaviors and effective compiler settings")
